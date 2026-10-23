@@ -55,6 +55,7 @@
       .slide>.slide-counter{grid-area:count;position:static;justify-self:start;font-size:.62rem}
       .slide>.slide-nav{grid-area:nav;position:static;justify-self:end}
       .progress-rail{display:none}
+      .slide-nav button{padding:8px 10px}
       .slide-art,.slide.active .slide-art,.image-slide .slide-art{opacity:1;transform:none}
       .about-copy-large{opacity:1;transform:none}
 
@@ -69,16 +70,16 @@
       /* about */
       .about-layout{height:auto;display:block}
       .about-copy-large{max-height:none;overflow:visible;width:100%}
-      .about-slide::before{filter:blur(10px) saturate(.9);transform:scale(1.12)}
+      .about-slide::before{background:linear-gradient(90deg,rgba(15,8,17,.12),rgba(15,8,17,.30)),url('assets/blur-page-02.jpg') center/cover no-repeat;filter:none;transform:none}
 
       /* project / skills slides: full-width image, no blur layers (lighter on phones) */
-      .image-slide::before{background:linear-gradient(160deg,#2b1631,#120a10);background-image:none;filter:none;transform:none}
-      .image-slide::after{background:none}
-      .image-slide .slide-content{width:100%;height:auto;aspect-ratio:16/9;border-radius:14px;backdrop-filter:none;-webkit-backdrop-filter:none;background:#fff;cursor:zoom-in;-webkit-tap-highlight-color:transparent}
+      .image-slide::before{background-color:#150b17;background-image:var(--blur-bg);background-size:cover;background-position:center;filter:none;transform:none}
+      .image-slide::after{background:linear-gradient(160deg,rgba(19,10,20,.40),rgba(19,10,20,.10) 55%,rgba(19,10,20,.38))}
+      .image-slide .slide-content{width:100%;height:auto;aspect-ratio:16/9;border-radius:20px;border:1px solid rgba(255,255,255,.6);background:linear-gradient(135deg,rgba(255,255,255,.4),rgba(255,255,255,.14));box-shadow:0 22px 60px rgba(12,4,16,.38),inset 0 1px 0 rgba(255,255,255,.7);backdrop-filter:none;-webkit-backdrop-filter:none;cursor:zoom-in;-webkit-tap-highlight-color:transparent}
       .image-slide .slide-art{width:100%;height:100%;object-fit:cover}
       .image-slide .slide-title{font-size:.64rem;max-width:100%;white-space:normal;line-height:1.5}
-      .image-slide .slide-counter{background:none;border:0;padding:0;backdrop-filter:none}
-      .image-slide .slide-nav button{background:#ffffffd9;color:#211523}
+      .image-slide .slide-counter{white-space:nowrap;letter-spacing:.08em;font-size:.58rem;background:#ffffff1f;border:1px solid #ffffff4d;border-radius:999px;padding:9px 11px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+      .image-slide .slide-nav button{background:#ffffff80;color:#211523;border:1px solid #ffffff99;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
       .zoom-hint{display:block;position:absolute;right:10px;bottom:10px;z-index:3;font-size:.64rem;letter-spacing:.06em;color:#fff;background:#140d13c7;border-radius:99px;padding:7px 11px;pointer-events:none}
 
       /* contact */
@@ -128,7 +129,7 @@
 const nav=document.getElementById('topnav'),toggle=document.getElementById('menuToggle'),links=document.getElementById('navLinks');
 toggle.addEventListener('click',()=>links.classList.toggle('open'));links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
 const slides=[...document.querySelectorAll('.slide')],rail=document.getElementById('progressRail');
-slides.filter(s=>s.classList.contains('image-slide')).forEach(s=>{const img=s.querySelector('.slide-art');if(img)s.style.setProperty('--art-bg',`url(\"${img.getAttribute('src')}\")`)});
+slides.filter(s=>s.classList.contains('image-slide')).forEach(s=>{const img=s.querySelector('.slide-art');if(img)s.style.setProperty('--art-bg',`url(\"${img.getAttribute('src')}\")`);s.style.setProperty('--blur-bg',`url(\"${img.getAttribute('src').replace('assets/','assets/blur-')}\")`)});
 slides.forEach((slide,i)=>{const dot=document.createElement('a');dot.href='#'+slide.id;dot.title=slide.dataset.label;dot.setAttribute('aria-label',slide.dataset.label);if(i===0)dot.classList.add('active');rail.appendChild(dot);slide.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>slides[Math.min(i+1,slides.length-1)].scrollIntoView({behavior:'smooth'})));slide.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>slides[Math.max(i-1,0)].scrollIntoView({behavior:'smooth'})));});
 const dots=[...rail.querySelectorAll('a')];const observer=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting&&entry.intersectionRatio>.45){slides.forEach(s=>s.classList.remove('active'));entry.target.classList.add('active');dots.forEach(d=>d.classList.toggle('active',d.hash==='#'+entry.target.id));nav.classList.toggle('scrolled',entry.target.id!=='home');}}),{threshold:[.45,.65]});slides.forEach(s=>observer.observe(s));
 document.addEventListener('keydown',e=>{if(['ArrowDown','PageDown','ArrowRight'].includes(e.key)){e.preventDefault();let i=slides.findIndex(s=>s.classList.contains('active'));slides[Math.min(i+1,slides.length-1)].scrollIntoView({behavior:'smooth'});}if(['ArrowUp','PageUp','ArrowLeft'].includes(e.key)){e.preventDefault();let i=slides.findIndex(s=>s.classList.contains('active'));slides[Math.max(i-1,0)].scrollIntoView({behavior:'smooth'});}});
